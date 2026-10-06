@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Glow Up 🌸</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Glow Up">
+<meta name="theme-color" content="#FAF5F0">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: linear-gradient(180deg, #FAF5F0 0%, #F5EDE6 100%);
+    font-family: 'Tajawal', sans-serif;
+    margin: 0;
+    padding: calc(24px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
+    color: #333;
+    min-height: 100vh;
+  }
+  .header { text-align: center; padding: 10px 0 18px; }
+  .title { font-size: 24px; font-weight: 800; color: #4A3E3D; }
+  .subtitle { font-size: 14px; color: #8C7A7B; margin-top: 6px; }
+
+  /* بطاقة الأيام المتواصلة */
+  .streak {
+    background: linear-gradient(135deg, #FFD9B8, #F5B79B);
+    border-radius: 20px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 6px 18px rgba(217,139,106,0.25);
+  }
+  .streak-num {
+    font-size: 34px; font-weight: 800; color: #6B3A1F;
+    line-height: 1;
+  }
+  .streak-label { font-size: 13px; color: #8A5533; font-weight: 700; margin-top: 4px; }
+  .streak-emoji { font-size: 42px; }
+
+  /* عبارة تحفيزية */
+  .quote {
+    background: #FFF;
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    color: #6B5B5A;
+    line-height: 1.6;
+    text-align: center;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(180,140,120,0.06);
+    border-right: 3px solid #F5B79B;
+  }
+
+  /* شريط التقدم الكلي */
+  .overall {
+    background: #FFF; border-radius: 18px; padding: 16px 20px;
+    margin-bottom: 18px; box-shadow: 0 4px 14px rgba(180,140,120,0.08);
+  }
+  .overall-top {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 700; color: #6B5B5A; margin-bottom: 10px;
+  }
+  .overall-pct { color: #D98B6A; font-size: 15px; }
+  .bar-bg { background: #F2E8E0; height: 10px; border-radius: 50px; overflow: hidden; }
+  .bar-fill {
+    height: 100%; background: linear-gradient(90deg, #F5B79B, #D98B6A);
+    border-radius: 50px; width: 0%; transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .folder-card {
+    background: #FFF; border-radius: 18px; margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(180,140,120,0.06);
+    overflow: hidden; transition: box-shadow 0.3s;
+  }
+  .folder-card.open { box-shadow: 0 8px 24px rgba(180,140,120,0.14); }
+  .folder-head {
+    padding: 18px 20px; display: flex; justify-content: space-between;
+    align-items: center; cursor: pointer; user-select: none;
+  }
+  .card-info { display: flex; flex-direction: column; flex: 1; }
+  .card-title { font-size: 16px; font-weight: 700; color: #2D2525; }
+  .card-sub { font-size: 12px; color: #A09091; margin-top: 4px; }
+  .icon-box {
+    width: 46px; height: 46px; background: #FFF0E6; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-right: 12px;
+  }
+  .chev { color: #C4B5AE; font-size: 14px; transition: transform 0.3s; margin-right: 8px; }
+  .folder-card.open .chev { transform: rotate(-180deg); }
+  .mini-bar { height: 4px; background: #F2E8E0; border-radius: 50px; margin: 0 20px; overflow: hidden; }
+  .mini-fill {
+    height: 100%; background: linear-gradient(90deg, #F5B79B, #D98B6A);
+    width: 0%; border-radius: 50px; transition: width 0.4s;
+  }
+  .tasks { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(.4,0,.2,1); }
+  .folder-card.open .tasks { max-height: 600px; }
+  .tasks-inner { padding: 14px 20px 20px; }
+  .task {
+    display: flex; align-items: center; padding: 12px 14px;
+    background: #FBF7F3; border-radius: 12px; margin-bottom: 8px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .task:active { background: #F5EDE6; }
+  .task.done .task-text { text-decoration: line-through; color: #B8A9A5; }
+  .checkbox {
+    width: 22px; height: 22px; border: 2px solid #E5D5C8; border-radius: 7px;
+    margin-left: 12px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s; background: #FFF;
+  }
+  .task.done .checkbox { background: #D98B6A; border-color: #D98B6A; }
+  .checkbox::after {
+    content: '✓'; color: #FFF; font-size: 14px; font-weight: 700;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .task.done .checkbox::after { opacity: 1; }
+  .task-text { font-size: 14px; color: #3D3232; line-height: 1.5; transition: color 0.2s; }
+
+  .reset {
+    display: block; margin: 26px auto 0; background: transparent;
+    border: 1.5px solid #E5D5C8; color: #A09091;
+    padding: 10px 22px; border-radius: 50px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .reset:active { background: #FFF; color: #D98B6A; }
+
+  @keyframes pop {
+    0% { transform: scale(1); } 50% { transform: scale(0.96); } 100% { transform: scale(1); }
+  }
+  .pop { animation: pop 0.25s ease; }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="title">🎓 منصة Glow Up</div>
+    <div class="subtitle">رحلتك نحو التغيير الشامل ✨</div>
+  </div>
+
+  <div class="streak">
+    <div>
+      <div class="streak-num"><span id="streakNum">1</span> 🔥</div>
+      <div class="streak-label">يوم متواصل</div>
+    </div>
+    <div class="streak-emoji">💪</div>
+  </div>
+
+  <div class="quote" id="quote"></div>
+
+  <div class="overall">
+    <div class="overall-top">
+      <span>✨ إنجازك الكلي</span>
+      <span class="overall-pct" id="overallPct">0%</span>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="overallBar"></div></div>
+  </div>
+
+  <div id="folders"></div>
+
+  <button class="reset" onclick="resetAll()">🔄 إعادة تعيين التقدم</button>
+
+<script>
+  const data = [
+    { id:'f1', icon:'📁', title:'تمارين نحت الجسم والخصر',
+      tasks:['تمارين قلوتس ورفع المؤخرة','تمارين الظهر والصدر','تمارين الأفخاذ الداخلية','تمارين الخصر والكور','كارديو خفيف 20 دقيقة'] },
+    { id:'f2', icon:'📁', title:'روتين العناية وتوحيد اللون',
+      tasks:['واقي شمس لليدين يومياً','كريم يوريا للركب والأكواع','تفريش جاف للسيلوليت','ترطيب الجسم بعد الاستحمام'] },
+    { id:'f3', icon:'📁', title:'صحة الجسم وعلاج الدوخة',
+      tasks:['شرب 2.5 لتر ماء يومياً','سناك صحي للمدرسة (مكسرات/تمر)','تحليل الدم: حديد وفيتامين د'] },
+    { id:'f4', icon:'📁', title:'ملفات المذاكرة والتسويف',
+      tasks:['تطبيق قاعدة الـ 5 دقائق','تقنية بومودورو (25/5)','تعديل النوم قبل الساعة 12'] }
+  ];
+
+  const quotes = [
+    "كل خطوة صغيرة اليوم = نسخة أفضل منك بكرة 🌱",
+    "ما تحتاجين تكونين الأفضل، تحتاجين تكونين أفضل من أمس 💫",
+    "التزامك اليوم هو نجاحك بكرة 💪",
+    "الجسم اللي تحبينه، يبغى الاستمرارية مو الكمال ✨",
+    "إذا تعبتي، ارتاحي... لا تتراجعين 🌸",
+    "أكبر من أي عذر، وأقوى من أي تسويف 🔥"
+  ];
+
+  const STORAGE_KEY = 'glowup_progress_v2';
+  let progress = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+  // Streak
+  (function initStreak() {
+    const today = new Date().toDateString();
+    let lastVisit = localStorage.getItem('glowup_lastVisit');
+    let streak = parseInt(localStorage.getItem('glowup_streak') || '0');
+    if (lastVisit !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      streak = (lastVisit === yesterday) ? streak + 1 : 1;
+      localStorage.setItem('glowup_lastVisit', today);
+      localStorage.setItem('glowup_streak', streak);
+    }
+    document.getElementById('streakNum').textContent = streak || 1;
+  })();
+
+  // Quote of the day
+  document.getElementById('quote').textContent = quotes[new Date().getDate() % quotes.length];
+
+  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }
+
+  function buildUI() {
+    const wrap = document.getElementById('folders');
+    wrap.innerHTML = '';
+    data.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'folder-card';
+      card.dataset.id = f.id;
+      card.innerHTML = `
+        <div class="folder-head" onclick="toggleFolder('${f.id}')">
+          <div class="icon-box">${f.icon}</div>
+          <div class="card-info">
+            <span class="card-title">${f.title}</span>
+            <span class="card-sub" id="sub-${f.id}">0 / ${f.tasks.length} مكتمل</span>
+          </div>
+          <span class="chev">▼</span>
+        </div>
+        <div class="mini-bar"><div class="mini-fill" id="mini-${f.id}"></div></div>
+        <div class="tasks"><div class="tasks-inner">
+          ${f.tasks.map((t,i) => `
+            <div class="task ${progress[f.id+'_'+i]?'done':''}" onclick="toggleTask('${f.id}',${i})">
+              <div class="checkbox"></div><span class="task-text">${t}</span>
+            </div>`).join('')}
+        </div></div>`;
+      wrap.appendChild(card);
+    });
+    updateAll();
+  }
+
+  function toggleFolder(id) {
+    document.querySelector(`.folder-card[data-id="${id}"]`).classList.toggle('open');
+  }
+
+  function toggleTask(fid, idx) {
+    const key = fid + '_' + idx;
+    progress[key] = !progress[key];
+    save();
+    const card = document.querySelector(`.folder-card[data-id="${fid}"]`);
+    const el = card.querySelectorAll('.task')[idx];
+    el.classList.toggle('done', progress[key]);
+    el.classList.add('pop');
+    setTimeout(() => el.classList.remove('pop'), 250);
+    updateFolder(fid); updateAll();
+  }
+
+  function updateFolder(fid) {
+    const f = data.find(x => x.id === fid);
+    const done = f.tasks.filter((_,i) => progress[fid+'_'+i]).length;
+    const pct = (done / f.tasks.length) * 100;
+    document.getElementById('mini-'+fid).style.width = pct + '%';
+    document.getElementById('sub-'+fid).textContent = `${done} / ${f.tasks.length} مكتمل`;
+  }
+
+  function updateAll() {
+    let total = 0, doneAll = 0;
+    data.forEach(f => {
+      total += f.tasks.length;
+      doneAll += f.tasks.filter((_,i) => progress[f.id+'_'+i]).length;
+      updateFolder(f.id);
+    });
+    const pct = total ? Math.round((doneAll/total)*100) : 0;
+    document.getElementById('overallBar').style.width = pct + '%';
+    document.getElementById('overallPct').textContent = pct + '%';
+  }
+
+  function resetAll() {
+    if (!confirm('متأكد تبغى تصفّر كل التقدم؟')) return;
+    progress = {}; save(); buildUI();
+  }
+
+  buildUI();
+</script>
+</body>
+</html>
